@@ -22,7 +22,7 @@ public class WordleDictionary {
         logger.println("Словарь создан");
     }
 
-    public boolean contains (String word) {
+    public boolean contains(String word) {
         if (word == null) {
             return false;
         }
@@ -31,7 +31,7 @@ public class WordleDictionary {
         return wordSet.contains(normalized);
     }
 
-    public  String getRandomWord() {
+    public String getRandomWord() {
         if (words.isEmpty()) {
             logger.println("WordleDictionary - getRandomWord ОШИБКА: словарь пуст");
             return null;
@@ -60,7 +60,7 @@ public class WordleDictionary {
         char[] result = new char[guess.length()];
         boolean[] targetUsed = new boolean[target.length()];
 
-        for (int i = 0; i < guess.length(); i ++) {
+        for (int i = 0; i < guess.length(); i++) {
             if (guess.charAt(i) == target.charAt(i)) {
                 result[i] = '+';
                 targetUsed[i] = true;
@@ -163,7 +163,7 @@ public class WordleDictionary {
         return true;
     }
 
-    public  List<String> filterWordsByAllPatterns(List<String> guesses, List<String> patterns) {
+    public List<String> filterWordsByAllPatterns(List<String> guesses, List<String> patterns) {
         if (guesses.isEmpty()) {
             return new ArrayList<>(words);
         }
@@ -190,7 +190,7 @@ public class WordleDictionary {
         List<String> result = new ArrayList<>();
 
         for (String word : list1) {
-            if (list2.contains(word)){
+            if (list2.contains(word)) {
                 result.add(word);
             }
         }
