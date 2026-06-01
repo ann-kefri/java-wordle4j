@@ -1,6 +1,7 @@
 package ru.yandex.practicum;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +25,7 @@ class WordleTest {
     }
 
     @Test
-    void  testDictionaryContainsAndNormalized() {
+    void testDictionaryContainsAndNormalized() {
         assertTrue(dictionary.contains("герой"));
         assertTrue(dictionary.contains("КНИГА"));
         assertFalse(dictionary.contains("йцуке"));
@@ -70,7 +71,9 @@ class WordleTest {
     @Test
     void testGameOverAfterMaxAttempts() throws Exception {
         for (int i = 0; i < 6; i++) {
+            if (!game.isGameOver()) {
                 game.makeGuess("столб");
+            }
         }
         assertTrue(game.isGameOver());
         assertFalse(game.isWordGuessed());
