@@ -44,10 +44,10 @@ public class WordleDictionaryLoader {
         List<String> words = new ArrayList<>();
         log("WordleDictionaryLoader-readWordsFromFile");
 
-        try (BufferedReader  reader = new BufferedReader(
+        try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(
                         new FileInputStream(fileName),
-                        StandardCharsets.UTF_8))){
+                        StandardCharsets.UTF_8))) {
             String line;
             int lineNumber = 0;
 
