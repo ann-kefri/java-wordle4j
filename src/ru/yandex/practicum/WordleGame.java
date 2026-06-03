@@ -46,7 +46,7 @@ public class WordleGame {
     private final List<Map<Integer, Character>> misplacedHistory;
 
     public WordleGame(WordleDictionary dictionary, PrintWriter logger) {
-        this. dictionary = dictionary;
+        this.dictionary = dictionary;
         this.logger = logger;
 
         this.answer = dictionary.getRandomWord();
@@ -70,8 +70,8 @@ public class WordleGame {
     }
 
     public String makeGuess(String word) throws WordNotFoundException,
-                                                InvalidWordLengthException,
-                                                GameOverException {
+            InvalidWordLengthException,
+            GameOverException {
         if (gameOver) {
             throw new GameOverException("Игра закончилась");
         }
@@ -86,7 +86,7 @@ public class WordleGame {
             throw new WordNotFoundException(word);
         }
 
-        String pattern = WordleDictionary.compareWords(normalizedWord,answer);
+        String pattern = WordleDictionary.compareWords(normalizedWord, answer);
 
         updateLetterSets(normalizedWord, pattern);
 
@@ -120,7 +120,7 @@ public class WordleGame {
                     correctPositions.put(i, letter);
                     lettersInWord.add(letter);
                     break;
-                case  '^':
+                case '^':
                     misplacedLetters.add(letter);
                     lettersInWord.add(letter);
                     currentMisplaced.put(i, letter);
@@ -133,7 +133,7 @@ public class WordleGame {
             }
         }
 
-        if(!currentMisplaced.isEmpty()) {
+        if (!currentMisplaced.isEmpty()) {
             misplacedHistory.add(currentMisplaced);
         }
     }

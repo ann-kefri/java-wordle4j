@@ -20,7 +20,8 @@ public class Wordle {
     private static final String LOG_FILE = "wordle.log";
 
     public static void main(String[] args) {
-        try {PrintWriter logger = createLogger();
+        try {
+            PrintWriter logger = createLogger();
             writeLogHeader(logger);
 
             WordleDictionaryLoader loader = new WordleDictionaryLoader(logger);
