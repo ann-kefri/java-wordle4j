@@ -1,9 +1,7 @@
 package ru.yandex.practicum;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /*
 в этом классе хранится словарь и состояние игры
@@ -38,6 +36,15 @@ public class WordleGame {
 
     private final List<String> patterns;
 
+    private final Set<Character> correctLetters;
+    private final Set<Character> misplacedLetters;
+    private final Set<Character> wrongLetters;
+
+    private final Map<Integer, Character> correctPositions;
+    private final Set<Character> lettersInWord;
+
+    private final List<Map<Integer, Character>> misplacedHistory;
+
     public WordleGame(WordleDictionary dictionary, PrintWriter logger) {
         this. dictionary = dictionary;
         this.logger = logger;
@@ -51,6 +58,13 @@ public class WordleGame {
 
         this.guesses = new ArrayList<>();
         this.patterns = new ArrayList<>();
+
+        this.correctLetters = new HashSet<>();
+        this.misplacedLetters = new HashSet<>();
+        this.wrongLetters = new HashSet<>();
+        this.correctPositions = new HashMap<>();
+        this.lettersInWord = new HashSet<>();
+        this.misplacedHistory = new ArrayList<>();
 
         log("Игра создана");
     }
@@ -74,6 +88,8 @@ public class WordleGame {
 
         String pattern = WordleDictionary.compareWords(normalizedWord,answer);
 
+        updateLetterSets(normalizedWord, pattern);
+
         guesses.add(normalizedWord);
         patterns.add(pattern);
         steps++;
@@ -87,14 +103,44 @@ public class WordleGame {
             log("Проигрыш.");
         }
 
-        log("Попытка " + steps + ", " + normalizedWord + " = " + pattern);
+        logAttempt(steps, normalizedWord, pattern);
 
         return pattern;
     }
 
+    private void updateLetterSets(String word, String pattern) {
+        Map<Integer, Character> currentMisplaced = new HashMap<>();
+        for (int i = 0; i < pattern.length(); i++) {
+            char letter = word.charAt(i);
+            char result = pattern.charAt(i);
+
+            switch (result) {
+                case '+':
+                    correctLetters.add(letter);
+                    correctPositions.put(i, letter);
+                    lettersInWord.add(letter);
+                    break;
+                case  '^':
+                    misplacedLetters.add(letter);
+                    lettersInWord.add(letter);
+                    currentMisplaced.put(i, letter);
+                    break;
+                case '-':
+                    if (!correctLetters.contains(letter) && !misplacedLetters.contains(letter)) {
+                        wrongLetters.add(letter);
+                    }
+                    break;
+            }
+        }
+
+        if(!currentMisplaced.isEmpty()) {
+            misplacedHistory.add(currentMisplaced);
+        }
+    }
+
     public String getHint() {
         if (gameOver) {
-            log("Игра закончена, невозможно выдать подсказку.");
+            log("Игра закончена, невозможно выдать подсказку");
             return null;
         }
 
@@ -103,20 +149,62 @@ public class WordleGame {
             return dictionary.getRandomWord();
         }
 
-        List<String> possibleWords = dictionary.filterWordsByAllPatterns(guesses, patterns);
-        possibleWords.removeAll(guesses);
+        List<String> possibleWords = dictionary.getWords();
+        List<String> filtered = new ArrayList<>();
 
-        if (possibleWords.isEmpty()) {
-            log("Нет доступных слов");
+        for (String candidate : possibleWords) {
+            if (isWordPossible(candidate)) {
+                filtered.add(candidate);
+            }
+        }
+
+        filtered.removeAll(guesses);
+
+        if (filtered.isEmpty()) {
+            log("нет доступных слов");
             return null;
         }
 
         Random random = new Random();
-        String hint = possibleWords.get(random.nextInt(possibleWords.size()));
-
-        log("Подсказка дана.");
-
+        String hint = filtered.get(random.nextInt(filtered.size()));
+        log("Умная подсказка дана");
         return hint;
+    }
+
+    private boolean isWordPossible(String candidate) {
+        String normalizedCandidate = WordleDictionary.normalizeWord(candidate);
+
+        for (Map.Entry<Integer, Character> entry : correctPositions.entrySet()) {
+            int position = entry.getKey();
+            char requiredLetter = entry.getValue();
+            if (normalizedCandidate.charAt(position) != requiredLetter) {
+                return false;
+            }
+        }
+
+        for (char letter : wrongLetters) {
+            if (normalizedCandidate.indexOf(letter) != -1) {
+                return false;
+            }
+        }
+
+        for (char letter : lettersInWord) {
+            if (normalizedCandidate.indexOf(letter) == -1) {
+                return false;
+            }
+        }
+
+        for (Map<Integer, Character> history : misplacedHistory) {
+            for (Map.Entry<Integer, Character> entry : history.entrySet()) {
+                int position = entry.getKey();
+                char letter = entry.getValue();
+                if (normalizedCandidate.charAt(position) == letter) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     public String getAnswer() {
@@ -151,11 +239,24 @@ public class WordleGame {
         return patterns;
     }
 
-    public void printState() {
-        System.out.println("Состояние игры:");
-        System.out.println("Шагов использовано: " + steps + " из " + MAX_ATTEMPTS);
-        System.out.println("Игра окончена: " + gameOver);
-        System.out.println("Победа: " + wordGuessed);
+    public Set<Character> getCorrectLetters() {
+        return correctLetters;
+    }
+
+    public Set<Character> getMisplacedLetters() {
+        return misplacedLetters;
+    }
+
+    public Set<Character> getWrongLetters() {
+        return wrongLetters;
+    }
+
+    public Map<Integer, Character> getCorrectPositions() {
+        return correctPositions;
+    }
+
+    public Set<Character> getLettersInWord() {
+        return lettersInWord;
     }
 
     private void log(String message) {
@@ -163,6 +264,17 @@ public class WordleGame {
             logger.println("WordleGame " + message);
             logger.flush();
         }
+    }
+
+    private void logAttempt(int step, String word, String pattern) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Попытка");
+        sb.append(step);
+        sb.append(", ");
+        sb.append(word);
+        sb.append(" = ");
+        sb.append(pattern);
+        log(sb.toString());
     }
 
 }

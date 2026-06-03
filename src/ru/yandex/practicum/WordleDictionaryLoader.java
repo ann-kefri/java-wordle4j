@@ -20,7 +20,7 @@ public class WordleDictionaryLoader {
         log("Создан загрузчик словаря");
     }
 
-    public WordleDictionary loadDictionary(String filename) throws IOException {
+    public WordleDictionary loadDictionary(String filename) throws DictionaryEmptyException, IOException {
         log("Начинаю загрузку слов из файла: " + filename);
 
         List<String> rawWords = readWordsFromFile(filename);
@@ -31,7 +31,7 @@ public class WordleDictionaryLoader {
 
         if (validWords.isEmpty()) {
             log("Словарь пуст! В файле нет слов из 5 букв.");
-            throw new RuntimeException("Словарь пуст! В файле нет слов из 5 букв.");
+            throw new DictionaryEmptyException("Словарь пуст! В файле нет слов из 5 букв.");
         }
 
         WordleDictionary dictionary = new WordleDictionary(validWords, logger);

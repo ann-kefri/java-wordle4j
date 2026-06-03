@@ -6,7 +6,7 @@ public class InvalidWordLengthException extends Exception {
 
     public InvalidWordLengthException(String word) {
 
-        super("Слово '" + word + "' должно состоять из 5 букв");
+        super(String.format("Слово '%s' должно состоять из 5 букв", word));
 
         this.word = word;
     }

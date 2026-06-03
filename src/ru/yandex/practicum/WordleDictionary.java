@@ -187,10 +187,11 @@ public class WordleDictionary {
     }
 
     private List<String> intersectLists(List<String> list1, List<String> list2) {
+        Set<String> secondSet = new HashSet<>(list2);
         List<String> result = new ArrayList<>();
 
         for (String word : list1) {
-            if (list2.contains(word)) {
+            if (secondSet.contains(word)) {
                 result.add(word);
             }
         }
@@ -198,4 +199,7 @@ public class WordleDictionary {
         return result;
     }
 
+    public List<String> getWords() {
+        return words;
+    }
 }

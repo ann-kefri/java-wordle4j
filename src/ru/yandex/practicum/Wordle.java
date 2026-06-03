@@ -20,10 +20,7 @@ public class Wordle {
     private static final String LOG_FILE = "wordle.log";
 
     public static void main(String[] args) {
-        PrintWriter logger = null;
-
-        try {
-            logger = createLogger();
+        try {PrintWriter logger = createLogger();
             writeLogHeader(logger);
 
             WordleDictionaryLoader loader = new WordleDictionaryLoader(logger);
@@ -39,15 +36,10 @@ public class Wordle {
             }
 
             writeLogFooter(logger, game);
-        } catch (FileNotFoundException e) {
+        } catch (DictionaryEmptyException e) {
             System.out.println("Файл не найден");
         } catch (Exception e) {
             System.out.println("Непредвиденная ошибка");
-        } finally {
-            if (logger != null) {
-                logger.close();
-                System.out.println("Лог игры сохранен в файл: " + LOG_FILE);
-            }
         }
     }
 

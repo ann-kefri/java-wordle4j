@@ -4,7 +4,7 @@ public class WordNotFoundException extends Exception {
     private final String word;
 
     public WordNotFoundException(String word) {
-        super("Слово '" + word + "' не найдено в нашем словаре");
+        super(String.format("Слово '%s' не найдено в нашем словаре", word));
         this.word = word;
     }
 
